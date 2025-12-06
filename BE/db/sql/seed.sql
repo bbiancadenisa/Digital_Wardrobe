@@ -4,7 +4,7 @@
 -- =============================================================
 
 -- Default clothing styles
-INSERT INTO styles (name) VALUES
+INSERT INTO styles (name) VALUES 
 ('casual'),
 ('office'),
 ('elegant'),

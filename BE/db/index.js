@@ -1,6 +1,7 @@
 const { Pool } = require("pg");
 const dotenv = require("dotenv");
-dotenv.config({ path: path.join(__dirname, "../../.env") }); // load BE/.env
+const path = require("path"); 
+dotenv.config({ path: path.join(__dirname, "../.env") }); // load BE/.env
 
 // Connection pool setup (recommended instead of Client)
 const pool = new Pool({
@@ -10,6 +11,9 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT ?? 5433),
   database: process.env.DB_NAME ?? "Digital_Wardrobe_Database",
 });
+
+console.log("DB_PASSWORD:", process.env.DB_PASSWORD); // Debugging
+console.log("Type of DB_PASSWORD:", typeof process.env.DB_PASSWORD); // Debugging
 
 // Surface pooled client errors (idle clients etc.)
 pool.on("error", (err) => {
