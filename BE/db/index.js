@@ -12,9 +12,6 @@ const pool = new Pool({
   database: process.env.DB_NAME ?? "Digital_Wardrobe_Database",
 });
 
-console.log("DB_PASSWORD:", process.env.DB_PASSWORD); // Debugging
-console.log("Type of DB_PASSWORD:", typeof process.env.DB_PASSWORD); // Debugging
-
 // Surface pooled client errors (idle clients etc.)
 pool.on("error", (err) => {
   console.error("Unexpected PostgreSQL pool error:", err && (err.stack || err.message) || err);

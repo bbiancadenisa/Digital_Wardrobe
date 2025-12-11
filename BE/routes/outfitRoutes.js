@@ -1,9 +1,18 @@
-import { Router } from "express";
+import express from "express";
 import auth from "../middleware/auth.js";
-import { createOutfit, listOutfits, deleteOutfit } from "../controllers/outfitController.js";
+import {
+  createOutfit,
+  getOutfits,
+  getOutfitById,
+  deleteOutfit
+} from "../controllers/outfitController.js";
 
-const router = Router();
-router.get("/", auth, listOutfits);
-router.post("/", auth, createOutfit);      // body: { name, garment_ids: [1,2,3] }
+const router = express.Router();
+
+router.post("/", auth, createOutfit);
+router.get("/", auth, getOutfits);
+router.get("/:id", auth, getOutfitById);
 router.delete("/:id", auth, deleteOutfit);
+
 export default router;
+

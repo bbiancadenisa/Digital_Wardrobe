@@ -31,7 +31,8 @@ COMMENT ON COLUMN users.created_at IS 'Date and time when the account was create
 -- =============================================================
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) UNIQUE NOT NULL
+  name VARCHAR(50) UNIQUE NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 COMMENT ON TABLE categories IS 'Defines clothing categories such as T-shirt, jeans, dress, or jacket.';
@@ -42,7 +43,8 @@ COMMENT ON TABLE categories IS 'Defines clothing categories such as T-shirt, jea
 -- =============================================================
 CREATE TABLE styles (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) UNIQUE NOT NULL
+  name VARCHAR(50) UNIQUE NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 COMMENT ON TABLE styles IS 'Lookup table defining clothing styles (casual, office, elegant, sport, etc.).';
@@ -75,7 +77,7 @@ CREATE TABLE garments (
   environment VARCHAR(30),
   material VARCHAR(50),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT chk_environment CHECK (environment IN ('indoor', 'outdoor'))
+  CONSTRAINT chk_environment CHECK (environment IN ('indoor', 'outdoor', 'both'))
 );
 
 COMMENT ON TABLE garments IS 'Represents an individual piece of clothing added by a user.';
@@ -108,13 +110,32 @@ CREATE TABLE outfit_items (
 COMMENT ON TABLE outfit_items IS 'Junction table connecting outfits and garments (many-to-many relationship).';
 
 -- =============================================================
--- 8. INDEXES (Performance Optimization)
+-- 8. FAVORITES TABLE
+-- Stores user-favorited outfits.
+-- Prevents duplicates via UNIQUE.
 -- =============================================================
-CREATE INDEX idx_garments_user_id ON garments(user_id);
+CREATE TABLE favorites (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  outfit_id INT NOT NULL REFERENCES outfits(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, outfit_id)
+);
+
+COMMENT ON TABLE favorites IS 'Stores outfits marked as favorites by users. Ensures uniqueness per user.';
+
+-- =============================================================
+-- 9. INDEXES (Performance Optimization)
+-- =============================================================
+CREATE INDEX idx_garments_user_id    ON garments(user_id);
 CREATE INDEX idx_garments_category_id ON garments(category_id);
-CREATE INDEX idx_garments_style_id ON garments(style_id);
-CREATE INDEX idx_garments_season_id ON garments(season_id);
-CREATE INDEX idx_outfits_user_id ON outfits(user_id);
+CREATE INDEX idx_garments_style_id    ON garments(style_id);
+CREATE INDEX idx_garments_season_id   ON garments(season_id);
+
+CREATE INDEX idx_outfits_user_id      ON outfits(user_id);
+
+CREATE INDEX idx_favorites_user_id    ON favorites(user_id);
+CREATE INDEX idx_favorites_outfit_id  ON favorites(outfit_id);
 
 -- =============================================================
 -- END OF SCHEMA
