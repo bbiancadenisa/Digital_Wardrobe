@@ -53,16 +53,24 @@ export const getOutfits = async (req, res) => {
 // ======================================================
 export const createOutfit = async (req, res) => {
   const userId = req.user.id;
-  let { name, garment_ids } = req.body;
+  let { name, garment_ids, image_url } = req.body;
 
-  console.log("Received data:", { name, garment_ids, hasFile: !!req.file });
+  console.log("Received data:", {
+    name,
+    garment_ids,
+    hasFile: !!req.file,
+  });
+
+  // If image uploaded via multer, take Cloudinary URL
+  if (req.file?.path) {
+    image_url = req.file.path;
+  }
 
   // Parse garment_ids if it comes as a JSON string
   if (typeof garment_ids === "string") {
     try {
       garment_ids = JSON.parse(garment_ids);
     } catch (e) {
-      console.error("Failed to parse garment_ids:", e);
       return res.status(400).json({ error: "Invalid garment_ids format" });
     }
   }
@@ -72,9 +80,9 @@ export const createOutfit = async (req, res) => {
   }
 
   if (!Array.isArray(garment_ids) || garment_ids.length === 0) {
-    return res
-      .status(400)
-      .json({ error: "At least one garment must be included" });
+    return res.status(400).json({
+      error: "At least one garment must be included",
+    });
   }
 
   const client = await pool.connect();
@@ -82,17 +90,17 @@ export const createOutfit = async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    // Insert outfit
+    // Insert outfit (image_url is optional)
     const outfitRes = await client.query(
-      `INSERT INTO outfits (user_id, name) 
-       VALUES ($1, $2) 
+      `INSERT INTO outfits (user_id, name, image_url)
+       VALUES ($1, $2, $3)
        RETURNING *`,
-      [userId, name.trim()]
+      [userId, name.trim(), image_url || null]
     );
 
     const outfit = outfitRes.rows[0];
 
-    // Insert outfit_items
+    // Insert outfit items
     const insertItemQuery =
       "INSERT INTO outfit_items (outfit_id, garment_id) VALUES ($1, $2)";
 
@@ -104,16 +112,16 @@ export const createOutfit = async (req, res) => {
 
     res.status(201).json({
       message: "Outfit created successfully",
-      outfit_id: outfit.id,
       outfit,
       garments: garment_ids,
     });
   } catch (err) {
     await client.query("ROLLBACK");
     console.error("Error creating outfit:", err);
-    res
-      .status(500)
-      .json({ error: "Failed to create outfit", details: err.message });
+    res.status(500).json({
+      error: "Failed to create outfit",
+      details: err.message,
+    });
   } finally {
     client.release();
   }
@@ -181,5 +189,46 @@ export const deleteOutfit = async (req, res) => {
   } catch (err) {
     console.error("Error deleting outfit:", err);
     res.status(500).json({ error: "Failed to delete outfit" });
+  }
+};
+
+// ======================================================
+// UPDATE OUTFIT
+// ======================================================
+export const updateOutfit = async (req, res) => {
+  const userId = req.user.id;
+  const outfitId = req.params.id;
+  let { name, image_url } = req.body;
+
+  // If new image uploaded
+  if (req.file?.path) {
+    image_url = req.file.path;
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `UPDATE outfits
+       SET
+         name = COALESCE($1, name),
+         image_url = COALESCE($2, image_url)
+       WHERE id = $3 AND user_id = $4
+       RETURNING *`,
+      [name?.trim() || null, image_url || null, outfitId, userId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Outfit not found" });
+    }
+
+    res.json({
+      message: "Outfit updated successfully",
+      outfit: rows[0],
+    });
+  } catch (err) {
+    console.error("Error updating outfit:", err);
+    res.status(500).json({
+      error: "Failed to update outfit",
+      details: err.message,
+    });
   }
 };

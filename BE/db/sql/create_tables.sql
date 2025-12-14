@@ -92,6 +92,7 @@ CREATE TABLE outfits (
   id SERIAL PRIMARY KEY,
   user_id INT REFERENCES users(id) ON DELETE CASCADE,
   name VARCHAR(100) NOT NULL,
+  image_url TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
