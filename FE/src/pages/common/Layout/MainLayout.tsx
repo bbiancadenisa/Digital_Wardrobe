@@ -1,14 +1,15 @@
-import React from "react";
-import { Layout, Menu, Button, Avatar, Dropdown } from "antd";
 import {
-  UserOutlined,
-  LogoutOutlined,
-  HomeOutlined,
   AppstoreOutlined,
+  BulbOutlined,
   HeartOutlined,
+  HomeOutlined,
+  LogoutOutlined,
   PlusOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
+import React from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/useAuth";
 import "./MainLayout.css";
 
@@ -42,6 +43,12 @@ const MainLayout: React.FC = () => {
       icon: <PlusOutlined />,
       label: "Outfits",
       onClick: () => navigate("/outfits"),
+    },
+    {
+      key: "/recommended",
+      icon: <BulbOutlined />,
+      label: "Recommended",
+      onClick: () => navigate("/recommended"),
     },
     {
       key: "/favorites",

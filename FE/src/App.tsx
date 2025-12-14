@@ -1,24 +1,25 @@
-import React from "react";
 import {
+  Navigate,
+  Route,
   BrowserRouter as Router,
   Routes,
-  Route,
-  Navigate,
 } from "react-router-dom";
+import "./App.css";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
+import AddGarmentPage from "./pages/AddGarmentPage/AddGarmentPage";
+import AddOutfitPage from "./pages/AddOutfitPage/AddOutfitPage";
+import Authentication from "./pages/AuthenticationPage/Authentication";
 import MainLayout from "./pages/common/Layout/MainLayout";
 import ProtectedRoute from "./pages/common/ProtectedRoute";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import Authentication from "./pages/AuthenticationPage/Authentication";
-import HomePage from "./pages/HomePage/HomePage";
-import AddOutfitPage from "./pages/AddOutfitPage/AddOutfitPage";
-import OutfitsPage from "./pages/OutfitsPage/OutfitsPage";
-import FavoritesPage from "./pages/FavoritesPage/FavoritesPage";
-import WardrobePage from "./pages/WardrobePage/WardrobePage";
-import AddGarmentPage from "./pages/AddGarmentPage/AddGarmentPage";
-import OutfitDetailsPage from "./pages/OutfitDetailsPage/OutfitDetailsPage";
 import EditGarmentPage from "./pages/EditGarmentPage/EditGarmentPage";
-import "./App.css";
+import EditOutfitPage from "./pages/EditOutfitPage/EditOutfitPage";
+import FavoritesPage from "./pages/FavoritesPage/FavoritesPage";
+import HomePage from "./pages/HomePage/HomePage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import OutfitDetailsPage from "./pages/OutfitDetailsPage/OutfitDetailsPage";
+import OutfitsPage from "./pages/OutfitsPage/OutfitsPage";
+import RecommendedPage from "./pages/RecommendedPage/RecommendedPage";
+import WardrobePage from "./pages/WardrobePage/WardrobePage";
 
 function App() {
   return (
@@ -42,10 +43,12 @@ function App() {
             <Route path="/add-outfit" element={<AddOutfitPage />} />
             <Route path="/outfits" element={<OutfitsPage />} />
             <Route path="/outfits/:id" element={<OutfitDetailsPage />} />
+            <Route path="/outfits/:id/edit" element={<EditOutfitPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/wardrobe" element={<WardrobePage />} />
             <Route path="/wardrobe/edit/:id" element={<EditGarmentPage />} />
             <Route path="/add-garment" element={<AddGarmentPage />} />
+            <Route path="/recommended" element={<RecommendedPage />} />
             <Route path="/profile" element={<div>Profile</div>} />
           </Route>
 

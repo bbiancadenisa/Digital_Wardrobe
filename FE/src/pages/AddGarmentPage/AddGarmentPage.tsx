@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PlusOutlined, SaveOutlined, UploadOutlined } from "@ant-design/icons";
 import type { UploadFile } from "antd";
 import { Button, Card, Form, Input, message, Select, Upload } from "antd";
@@ -33,6 +34,8 @@ const AddGarmentPage: React.FC = () => {
   const [styles, setStyles] = useState<Style[]>([]);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [styleSearch, setStyleSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,7 +66,54 @@ const AddGarmentPage: React.FC = () => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const createNewCategory = async (name: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/categories`,
+        { name },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const newCategory = response.data;
+      setCategories([...categories, newCategory]);
+      form.setFieldsValue({ category_id: newCategory.id });
+      setCategorySearch("");
+      message.success(`Category "${name}" created successfully!`);
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        message.error("This category already exists!");
+      } else {
+        message.error("Failed to create category");
+      }
+    }
+  };
+
+  const createNewStyle = async (name: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/styles`,
+        { name },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const newStyle = response.data;
+      setStyles([...styles, newStyle]);
+      form.setFieldsValue({ style_id: newStyle.id });
+      setStyleSearch("");
+      message.success(`Style "${name}" created successfully!`);
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        message.error("This style already exists!");
+      } else {
+        message.error("Failed to create style");
+      }
+    }
+  };
+
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
@@ -100,7 +150,6 @@ const AddGarmentPage: React.FC = () => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleUploadChange = ({ fileList: newFileList }: any) => {
     setFileList(newFileList.slice(-1));
   };
@@ -135,7 +184,36 @@ const AddGarmentPage: React.FC = () => {
             label="Category"
             rules={[{ required: true, message: "Please select a category!" }]}
           >
-            <Select placeholder="Select category" size="large">
+            <Select
+              placeholder="Select category"
+              size="large"
+              showSearch
+              onSearch={(value) => setCategorySearch(value)}
+              filterOption={(input, option) =>
+                String(option?.label || "")
+                  ?.toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              dropdownRender={(menu) => (
+                <>
+                  {menu}
+                  {categorySearch && categorySearch.trim().length > 0 && (
+                    <div
+                      style={{ padding: "8px", borderTop: "1px solid #f0f0f0" }}
+                    >
+                      <Button
+                        type="link"
+                        icon={<PlusOutlined />}
+                        onClick={() => createNewCategory(categorySearch)}
+                        style={{ width: "100%", textAlign: "left" }}
+                      >
+                        Add "{categorySearch}"
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+            >
               {categories.map((cat) => (
                 <Option key={cat.id} value={cat.id}>
                   {cat.name}
@@ -149,7 +227,36 @@ const AddGarmentPage: React.FC = () => {
             label="Style"
             rules={[{ required: true, message: "Please select a style!" }]}
           >
-            <Select placeholder="Select style" size="large">
+            <Select
+              placeholder="Select style"
+              size="large"
+              showSearch
+              onSearch={(value) => setStyleSearch(value)}
+              filterOption={(input, option) =>
+                String(option?.label || "")
+                  ?.toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              dropdownRender={(menu) => (
+                <>
+                  {menu}
+                  {styleSearch && styleSearch.trim().length > 0 && (
+                    <div
+                      style={{ padding: "8px", borderTop: "1px solid #f0f0f0" }}
+                    >
+                      <Button
+                        type="link"
+                        icon={<PlusOutlined />}
+                        onClick={() => createNewStyle(styleSearch)}
+                        style={{ width: "100%", textAlign: "left" }}
+                      >
+                        Add "{styleSearch}"
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+            >
               {styles.map((style) => (
                 <Option key={style.id} value={style.id}>
                   {style.name}

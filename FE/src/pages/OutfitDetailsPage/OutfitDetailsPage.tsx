@@ -3,6 +3,7 @@
 import {
   ArrowLeftOutlined,
   DeleteOutlined,
+  EditOutlined,
   HeartFilled,
   HeartOutlined,
 } from "@ant-design/icons";
@@ -148,6 +149,12 @@ const OutfitDetailsPage: React.FC = () => {
             className={isFavorite ? "favorite-active" : ""}
           >
             {isFavorite ? "Favorited" : "Add to Favorites"}
+          </Button>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/outfits/${id}/edit`)}
+          >
+            Edit
           </Button>
           <Button
             icon={<DeleteOutlined />}

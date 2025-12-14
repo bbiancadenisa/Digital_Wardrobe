@@ -9,7 +9,7 @@ export const getOutfits = async (req, res) => {
   try {
     // Fetch all outfits for the user
     const outfitRes = await pool.query(
-      `SELECT id, name, created_at
+      `SELECT id, name, image_url, created_at
        FROM outfits
        WHERE user_id = $1
        ORDER BY created_at DESC`,
