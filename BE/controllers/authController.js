@@ -15,6 +15,26 @@ export const register = async (req, res) => {
       [username, email, hash]
     );
     res.status(201).json(rows[0]);
+
+    const userId = newUser.id;
+
+    await pool.query(
+      `INSERT INTO categories (user_id, name)
+      VALUES
+      ($1, 't-shirt'), ($1, 'jeans'), ($1, 'dress'),
+      ($1, 'jacket'), ($1, 'pullover'), ($1, 'skirt'),
+      ($1, 'shoes'), ($1, 'shirt')`,
+      [userId]
+    );
+
+    await pool.query(
+      `INSERT INTO styles (user_id, name)
+      VALUES
+      ($1, 'casual'), ($1, 'office'), ($1, 'elegant'),
+      ($1, 'sport'), ($1, 'hiking'), ($1, 'party')`,
+      [userId]
+    );
+
   } catch (e) {
     res.status(400).json({ error: e.detail || e.message });
   }

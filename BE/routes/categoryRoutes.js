@@ -11,13 +11,11 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Public route
-router.get("/", getCategories);
-
-// Authenticated routes
+router.get("/", auth, getCategories);
 router.post("/", auth, createCategory);
-router.put("/:id", auth, updateCategory);
-router.put("/:id/disable", auth, disableCategory);
-router.put("/:id/enable", auth, enableCategory);
+router.patch("/:id", auth, updateCategory);
+router.patch("/:id/disable", auth, disableCategory);
+router.patch("/:id/enable", auth, enableCategory);
+
 
 export default router;

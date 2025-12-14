@@ -59,6 +59,7 @@ export const getGarment = async (req, res) => {
 
 export const createGarment = async (req, res) => {
   try {
+    const userId = req.user.id;
     const {
       name,
       category_id,
@@ -69,6 +70,32 @@ export const createGarment = async (req, res) => {
       material,
     } = req.body;
 
+    // -------------------------------
+    // Validate category ownership
+    // -------------------------------
+    const categoryCheck = await pool.query(
+      `SELECT id FROM categories
+       WHERE id = $1 AND user_id = $2 AND is_active = TRUE`,
+      [category_id, userId]
+    );
+
+    if (categoryCheck.rowCount === 0) {
+      return res.status(400).json({ error: "Invalid category" });
+    }
+
+    // -------------------------------
+    // Validate style ownership
+    // -------------------------------
+    const styleCheck = await pool.query(
+      `SELECT id FROM styles
+       WHERE id = $1 AND user_id = $2 AND is_active = TRUE`,
+      [style_id, userId]
+    );
+
+    if (styleCheck.rowCount === 0) {
+      return res.status(400).json({ error: "Invalid style" });
+    }
+
     let image_url = null;
     if (req.file) {
       try {
@@ -76,7 +103,6 @@ export const createGarment = async (req, res) => {
         image_url = result.secure_url;
       } catch (uploadError) {
         console.error("Cloudinary upload failed:", uploadError);
-        // Continue without image if Cloudinary fails
       }
     }
 
@@ -86,7 +112,7 @@ export const createGarment = async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING *`,
       [
-        req.user.id,
+        userId,
         category_id,
         style_id,
         season_id,
@@ -97,12 +123,11 @@ export const createGarment = async (req, res) => {
         material,
       ]
     );
+
     res.status(201).json(rows[0]);
   } catch (error) {
     console.error("Error creating garment:", error);
-    res
-      .status(500)
-      .json({ error: error.message || "Failed to create garment" });
+    res.status(500).json({ error: error.message || "Failed to create garment" });
   }
 };
 

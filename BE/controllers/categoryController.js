@@ -1,12 +1,18 @@
 import pool from "../db/index.js";
 
 // ======================================================
-// GET all active categories
+// GET all active categories (ONLY current user)
 // ======================================================
 export const getCategories = async (req, res) => {
+  const userId = req.user.id;
+
   try {
     const { rows } = await pool.query(
-      "SELECT id, name FROM categories WHERE is_active = TRUE ORDER BY name ASC"
+      `SELECT id, name 
+       FROM categories 
+       WHERE is_active = TRUE AND user_id = $1
+       ORDER BY name ASC`,
+      [userId]
     );
     res.json(rows);
   } catch (err) {
@@ -16,9 +22,10 @@ export const getCategories = async (req, res) => {
 };
 
 // ======================================================
-// CREATE category
+// CREATE category (USER-SPECIFIC)
 // ======================================================
 export const createCategory = async (req, res) => {
+  const userId = req.user.id;
   const { name } = req.body;
 
   if (!name?.trim()) {
@@ -27,21 +34,27 @@ export const createCategory = async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "INSERT INTO categories (name) VALUES ($1) RETURNING *",
-      [name.trim()]
+      `INSERT INTO categories (user_id, name)
+       VALUES ($1, $2)
+       RETURNING *`,
+      [userId, name.trim().toLowerCase()]
     );
 
     res.status(201).json(rows[0]);
   } catch (err) {
+    if (err.code === "23505") {
+      return res.status(409).json({ error: "Category already exists" });
+    }
     console.error("Error creating category:", err);
     res.status(500).json({ error: "Failed to create category" });
   }
 };
 
 // ======================================================
-// UPDATE category
+// UPDATE category (ONLY if owned by user)
 // ======================================================
 export const updateCategory = async (req, res) => {
+  const userId = req.user.id;
   const categoryId = req.params.id;
   const { name } = req.body;
 
@@ -51,8 +64,11 @@ export const updateCategory = async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "UPDATE categories SET name = $1 WHERE id = $2 RETURNING *",
-      [name.trim(), categoryId]
+      `UPDATE categories
+       SET name = $1
+       WHERE id = $2 AND user_id = $3
+       RETURNING *`,
+      [name.trim().toLowerCase(), categoryId, userId]
     );
 
     if (rows.length === 0) {
@@ -67,15 +83,19 @@ export const updateCategory = async (req, res) => {
 };
 
 // ======================================================
-// DISABLE category (soft delete)
+// DISABLE category (soft delete, USER-SCOPED)
 // ======================================================
 export const disableCategory = async (req, res) => {
+  const userId = req.user.id;
   const categoryId = req.params.id;
 
   try {
     const { rows } = await pool.query(
-      "UPDATE categories SET is_active = FALSE WHERE id = $1 RETURNING *",
-      [categoryId]
+      `UPDATE categories
+       SET is_active = FALSE
+       WHERE id = $1 AND user_id = $2
+       RETURNING *`,
+      [categoryId, userId]
     );
 
     if (rows.length === 0) {
@@ -90,15 +110,19 @@ export const disableCategory = async (req, res) => {
 };
 
 // ======================================================
-// ENABLE category
+// ENABLE category (USER-SCOPED)
 // ======================================================
 export const enableCategory = async (req, res) => {
+  const userId = req.user.id;
   const categoryId = req.params.id;
 
   try {
     const { rows } = await pool.query(
-      "UPDATE categories SET is_active = TRUE WHERE id = $1 RETURNING *",
-      [categoryId]
+      `UPDATE categories
+       SET is_active = TRUE
+       WHERE id = $1 AND user_id = $2
+       RETURNING *`,
+      [categoryId, userId]
     );
 
     if (rows.length === 0) {
