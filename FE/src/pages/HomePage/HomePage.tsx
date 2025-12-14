@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Typography, Button, Card, Row, Col, Statistic } from "antd";
 import {
-  PlusOutlined,
   AppstoreOutlined,
   HeartOutlined,
+  PlusOutlined,
   ShoppingOutlined,
   TagsOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Button, Card, Col, Row, Statistic, Typography } from "antd";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../services/api.config";
 
 const { Title, Paragraph } = Typography;
-const API_URL = "http://localhost:5000/api";
+
+const API_URL = API_BASE_URL;
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();

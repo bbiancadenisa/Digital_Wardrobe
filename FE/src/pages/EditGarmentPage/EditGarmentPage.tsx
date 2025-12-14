@@ -1,29 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import {
-  Form,
-  Input,
-  Select,
-  Button,
-  Upload,
-  message,
-  Spin,
-  Modal,
-  Card,
-} from "antd";
-import {
-  UploadOutlined,
   ArrowLeftOutlined,
   DeleteOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import type { UploadFile } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Spin,
+  Upload,
+} from "antd";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "./EditGarmentPage.css";
 
-const API_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from "../../services/api.config";
+
+const API_URL = API_BASE_URL;
 
 interface Category {
   id: number;
@@ -114,29 +116,8 @@ const EditGarmentPage: React.FC = () => {
     }
   };
 
-  const checkGarmentUsage = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/garments/${id}/outfits`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      return response.data.map((outfit: any) => outfit.name);
-    } catch (error) {
-      console.error("Error checking garment usage:", error);
-      return [];
-    }
-  };
-
   const handleDelete = async () => {
-    const outfits = await checkGarmentUsage();
-
-    if (outfits.length > 0) {
-      setAffectedOutfits(outfits);
-      setDeleteModalVisible(true);
-    } else {
-      setDeleteModalVisible(true);
-    }
+    setDeleteModalVisible(true);
   };
 
   const confirmDelete = async () => {
@@ -147,8 +128,11 @@ const EditGarmentPage: React.FC = () => {
       });
       message.success("Garment deleted successfully");
       navigate("/wardrobe");
-    } catch (error) {
-      message.error("Failed to delete garment");
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.error || "Failed to delete garment";
+      message.error(errorMessage);
+      setDeleteModalVisible(false);
     }
   };
 

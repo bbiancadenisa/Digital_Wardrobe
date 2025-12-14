@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from "react";
+import { EyeOutlined, HeartFilled, PlusOutlined } from "@ant-design/icons";
 import {
-  Card,
-  Row,
-  Col,
   Button,
+  Card,
+  Carousel,
+  Col,
+  Empty,
   message,
   Modal,
   Pagination,
-  Empty,
+  Row,
   Spin,
-  Carousel,
 } from "antd";
-import { HeartFilled, PlusOutlined, EyeOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./FavoritesPage.css";
 
-const API_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from "../../services/api.config";
+
+const API_URL = API_BASE_URL;
 
 interface Garment {
   id: number;

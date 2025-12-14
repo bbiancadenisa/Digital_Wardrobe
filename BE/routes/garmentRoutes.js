@@ -1,15 +1,14 @@
 import { Router } from "express";
 import multer from "multer";
-import auth from "../middleware/auth.js";
 import {
   createGarment,
-  listGarments,
-  getGarment,
-  updateGarment,
-  deleteGarment,
   createMultipleGarments,
-  getGarmentOutfits,
+  deleteGarment,
+  getGarment,
+  listGarments,
+  updateGarment,
 } from "../controllers/garmentController.js";
+import auth from "../middleware/auth.js";
 
 const upload = multer({ storage: multer.memoryStorage() }); // receive file buffer
 const router = Router();

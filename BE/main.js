@@ -1,16 +1,16 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express from "express";
 import cors from "cors";
+import express from "express";
 
 import authRoutes from "./routes/authRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import favoriteRoutes from "./routes/favoriteRoutes.js";
 import garmentRoutes from "./routes/garmentRoutes.js";
 import outfitRoutes from "./routes/outfitRoutes.js";
-import categoryRoutes from "./routes/categoryRoutes.js";
-import styleRoutes from "./routes/styleRoutes.js";
 import seasonRoutes from "./routes/seasonRoutes.js";
-import favoriteRoutes from "./routes/favoriteRoutes.js";
+import styleRoutes from "./routes/styleRoutes.js";
 import suggestionRoutes from "./routes/suggestionRoutes.js";
 
 import pool from "./db/index.js"; // Import the connection pool
@@ -44,6 +44,6 @@ app.use("/api/seasons", seasonRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/suggestions", suggestionRoutes);
 
-app.listen(process.env.PORT || 5000, () =>
-  console.log("API running on", process.env.PORT || 5000)
+app.listen(process.env.PORT || 5001, () =>
+  console.log("API running on", process.env.PORT || 5001)
 );

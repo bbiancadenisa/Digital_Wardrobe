@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Card, Button, message, Modal, Spin, Image, Row, Col, Tag } from "antd";
 import {
-  DeleteOutlined,
   ArrowLeftOutlined,
-  HeartOutlined,
+  DeleteOutlined,
   HeartFilled,
+  HeartOutlined,
 } from "@ant-design/icons";
+import { Button, Card, Col, Image, message, Modal, Row, Spin, Tag } from "antd";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "./OutfitDetailsPage.css";
 
-const API_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from "../../services/api.config";
+
+const API_URL = API_BASE_URL;
 
 interface Garment {
   id: number;

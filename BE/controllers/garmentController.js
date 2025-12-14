@@ -189,7 +189,7 @@ export const deleteGarment = async (req, res) => {
     if (checkRes.rows.length > 0) {
       return res.status(400).json({
         error:
-           error: "This garment cannot be deleted because it is used in one or more outfits."
+          "This garment cannot be deleted because it is used in one or more outfits.",
       });
     }
 
