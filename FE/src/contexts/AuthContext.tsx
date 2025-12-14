@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import type { ReactNode } from "react";
 import axios from "axios";
-import { AuthContext } from "./AuthContext";
+import type { ReactNode } from "react";
+import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "../services/api.config";
 import type { AuthContextType } from "./AuthContext";
+import { AuthContext } from "./AuthContext";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = API_BASE_URL;
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);

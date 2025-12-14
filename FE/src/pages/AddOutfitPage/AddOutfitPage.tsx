@@ -1,30 +1,32 @@
-import React, { useState, useEffect } from "react";
 import {
-  Form,
-  Input,
+  CameraOutlined,
+  CloseOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import type { UploadFile } from "antd";
+import {
   Button,
   Card,
+  Col,
+  Empty,
+  Form,
+  Image,
+  Input,
   message,
   Modal,
   Row,
-  Col,
-  Image,
-  Empty,
   Upload,
 } from "antd";
-import {
-  PlusOutlined,
-  SaveOutlined,
-  CloseOutlined,
-  SearchOutlined,
-  CameraOutlined,
-} from "@ant-design/icons";
-import type { UploadFile } from "antd";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AddOutfitPage.css";
 
-const API_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from "../../services/api.config";
+
+const API_URL = API_BASE_URL;
 
 interface Garment {
   id: number;

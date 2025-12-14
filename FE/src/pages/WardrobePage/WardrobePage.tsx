@@ -1,32 +1,34 @@
-import React, { useState, useEffect } from "react";
 import {
-  Input,
-  Select,
-  Button,
-  Card,
-  Row,
-  Col,
-  Pagination,
-  Empty,
-  Spin,
-  Tag,
-  Space,
-  Tooltip,
-  Image,
-  Modal,
-  message,
-} from "antd";
-import {
+  DeleteOutlined,
+  EyeOutlined,
+  FilterOutlined,
   PlusOutlined,
   SearchOutlined,
-  DeleteOutlined,
-  FilterOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Col,
+  Empty,
+  Image,
+  Input,
+  Modal,
+  Pagination,
+  Row,
+  Select,
+  Space,
+  Spin,
+  Tag,
+  Tooltip,
+  message,
+} from "antd";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../services/api.config";
 import "./WardrobePage.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = API_BASE_URL;
 const { Search } = Input;
 const { Option } = Select;
 
@@ -127,32 +129,7 @@ const WardrobePage: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const checkGarmentUsage = async (garmentId: number) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${API_URL}/garments/${garmentId}/outfits`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      return response.data.map((outfit: { name: string }) => outfit.name);
-    } catch (error) {
-      console.error("Failed to check garment usage:", error);
-      return [];
-    }
-  };
-
   const handleDeleteGarment = async (garmentId: number) => {
-    const outfits = await checkGarmentUsage(garmentId);
-
-    if (outfits.length > 0) {
-      message.error(
-        `Cannot delete this garment. It is currently used in ${outfits.length} outfit(s). Please remove it from those outfits first.`
-      );
-      return;
-    }
-
     setGarmentToDelete(garmentId);
     setDeleteModalVisible(true);
   };
@@ -169,9 +146,13 @@ const WardrobePage: React.FC = () => {
       setDeleteModalVisible(false);
       setGarmentToDelete(null);
       fetchData();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to delete garment:", error);
-      message.error("Failed to delete garment");
+      const errorMessage =
+        error.response?.data?.error || "Failed to delete garment";
+      message.error(errorMessage);
+      setDeleteModalVisible(false);
+      setGarmentToDelete(null);
     }
   };
 

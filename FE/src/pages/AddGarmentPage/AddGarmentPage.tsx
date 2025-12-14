@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Card, message, Select, Upload } from "antd";
 import { PlusOutlined, SaveOutlined, UploadOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import type { UploadFile } from "antd";
+import { Button, Card, Form, Input, message, Select, Upload } from "antd";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AddGarmentPage.css";
 
-const API_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from "../../services/api.config";
+
+const API_URL = API_BASE_URL;
 const { Option } = Select;
 
 interface Category {
