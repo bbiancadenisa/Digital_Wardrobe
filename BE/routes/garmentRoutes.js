@@ -2,7 +2,13 @@ import { Router } from "express";
 import multer from "multer";
 import auth from "../middleware/auth.js";
 import {
-  createGarment, listGarments, getGarment, updateGarment, deleteGarment, createMultipleGarments
+  createGarment,
+  listGarments,
+  getGarment,
+  updateGarment,
+  deleteGarment,
+  createMultipleGarments,
+  getGarmentOutfits,
 } from "../controllers/garmentController.js";
 
 const upload = multer({ storage: multer.memoryStorage() }); // receive file buffer
@@ -14,6 +20,5 @@ router.post("/", auth, upload.single("image"), createGarment);
 router.put("/:id", auth, upload.single("image"), updateGarment);
 router.delete("/:id", auth, deleteGarment);
 router.post("/bulk", auth, createMultipleGarments);
-
 
 export default router;

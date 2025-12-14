@@ -1,0 +1,188 @@
+.wardrobe-page {
+  padding: 0;
+}
+
+.wardrobe-header {
+  margin-bottom: 24px;
+}
+
+.header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-title h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.header-title .ant-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.header-title .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filters-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.filters-card .ant-input-search-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.filters-card .ant-input-search-button:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+}
+
+.filters-card .ant-input,
+.filters-card .ant-select-selector {
+  border-radius: 8px;
+}
+
+.filters-card .ant-input:focus,
+.filters-card .ant-input-focused,
+.filters-card .ant-select-focused .ant-select-selector {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.garments-section {
+  margin-top: 24px;
+}
+
+.garment-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.garment-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.garment-card .ant-card-cover {
+  height: 200px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.garment-card .no-image {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  color: #8c8c8c;
+  font-size: 16px;
+}
+
+.garment-card .ant-card-meta-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.garment-card .ant-card-actions {
+  background: #fafafa;
+}
+
+.garment-card .ant-card-actions > li {
+  margin: 8px 0;
+}
+
+.garment-card .ant-card-actions > li > span {
+  font-size: 18px;
+  color: #595959;
+  transition: color 0.3s ease;
+}
+
+.garment-card .ant-card-actions > li > span:hover {
+  color: #667eea;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  padding: 20px 0;
+}
+
+.pagination-container .ant-pagination-item-active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.pagination-container .ant-pagination-item-active a {
+  color: white;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.garments-section .ant-empty {
+  padding: 60px 20px;
+}
+
+.garments-section .ant-empty-description {
+  color: #8c8c8c;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.ant-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+@media (max-width: 768px) {
+  .header-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-title h2 {
+    font-size: 24px;
+  }
+
+  .header-title .ant-btn {
+    width: 100%;
+  }
+
+  .garment-card .ant-card-cover {
+    height: 180px;
+  }
+}
+
+@media (max-width: 576px) {
+  .wardrobe-page {
+    padding: 0;
+  }
+
+  .header-title h2 {
+    font-size: 20px;
+  }
+}

@@ -3,7 +3,7 @@ import auth from "../middleware/auth.js";
 import {
   addFavorite,
   removeFavorite,
-  getFavorites
+  getFavorites,
 } from "../controllers/favoriteController.js";
 
 const router = express.Router();

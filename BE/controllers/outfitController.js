@@ -23,7 +23,7 @@ export const getOutfits = async (req, res) => {
     }
 
     // Fetch all garments for these outfits in a single query
-    const outfitIds = outfits.map(o => o.id);
+    const outfitIds = outfits.map((o) => o.id);
 
     const garmentRes = await pool.query(
       `SELECT oi.outfit_id, g.*
@@ -36,13 +36,12 @@ export const getOutfits = async (req, res) => {
     const garmentRows = garmentRes.rows;
 
     // Attach garments to their outfits
-    const outfitsWithGarments = outfits.map(outfit => ({
+    const outfitsWithGarments = outfits.map((outfit) => ({
       ...outfit,
-      garments: garmentRows.filter(g => g.outfit_id === outfit.id)
+      garments: garmentRows.filter((g) => g.outfit_id === outfit.id),
     }));
 
     res.json(outfitsWithGarments);
-
   } catch (err) {
     console.error("Error fetching outfits:", err);
     res.status(500).json({ error: "Failed to fetch outfits" });
@@ -54,14 +53,28 @@ export const getOutfits = async (req, res) => {
 // ======================================================
 export const createOutfit = async (req, res) => {
   const userId = req.user.id;
-  const { name, garment_ids } = req.body;
+  let { name, garment_ids } = req.body;
+
+  console.log("Received data:", { name, garment_ids, hasFile: !!req.file });
+
+  // Parse garment_ids if it comes as a JSON string
+  if (typeof garment_ids === "string") {
+    try {
+      garment_ids = JSON.parse(garment_ids);
+    } catch (e) {
+      console.error("Failed to parse garment_ids:", e);
+      return res.status(400).json({ error: "Invalid garment_ids format" });
+    }
+  }
 
   if (!name?.trim()) {
     return res.status(400).json({ error: "Outfit name is required" });
   }
 
   if (!Array.isArray(garment_ids) || garment_ids.length === 0) {
-    return res.status(400).json({ error: "At least one garment must be included" });
+    return res
+      .status(400)
+      .json({ error: "At least one garment must be included" });
   }
 
   const client = await pool.connect();
@@ -93,13 +106,14 @@ export const createOutfit = async (req, res) => {
       message: "Outfit created successfully",
       outfit_id: outfit.id,
       outfit,
-      garments: garment_ids
+      garments: garment_ids,
     });
-
   } catch (err) {
     await client.query("ROLLBACK");
     console.error("Error creating outfit:", err);
-    res.status(500).json({ error: "Failed to create outfit" });
+    res
+      .status(500)
+      .json({ error: "Failed to create outfit", details: err.message });
   } finally {
     client.release();
   }
@@ -127,18 +141,18 @@ export const getOutfitById = async (req, res) => {
 
     // Fetch included garments
     const garmentRes = await pool.query(
-      `SELECT g.*
+      `SELECT g.*, c.name AS category_name
        FROM garments g
        JOIN outfit_items oi ON g.id = oi.garment_id
+       LEFT JOIN categories c ON c.id = g.category_id
        WHERE oi.outfit_id = $1`,
       [outfitId]
     );
 
     res.json({
-      outfit,
-      garments: garmentRes.rows
+      ...outfit,
+      garments: garmentRes.rows,
     });
-
   } catch (err) {
     console.error("Error fetching outfit:", err);
     res.status(500).json({ error: "Failed to fetch outfit" });

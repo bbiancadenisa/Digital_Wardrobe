@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (_req, res) => res.send("Digital Wardrobe API ✅"));
+app.get("/", (_req, res) => res.send("Digital Wardrobe API"));
 
 // Test database connection at startup
 pool
@@ -28,7 +28,12 @@ pool
     console.log("Connected to DB");
     client.release(); // Release the client back to the pool
   })
-  .catch((err) => console.error("Connection failed:", err && (err.stack || err.message) || err));
+  .catch((err) =>
+    console.error(
+      "Connection failed:",
+      (err && (err.stack || err.message)) || err
+    )
+  );
 
 app.use("/api/auth", authRoutes);
 app.use("/api/garments", garmentRoutes);

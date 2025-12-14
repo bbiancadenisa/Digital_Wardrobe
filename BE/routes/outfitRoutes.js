@@ -4,7 +4,7 @@ import {
   createOutfit,
   getOutfits,
   getOutfitById,
-  deleteOutfit
+  deleteOutfit,
 } from "../controllers/outfitController.js";
 
 const router = express.Router();
@@ -15,4 +15,3 @@ router.get("/:id", auth, getOutfitById);
 router.delete("/:id", auth, deleteOutfit);
 
 export default router;
-

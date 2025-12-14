@@ -1,0 +1,223 @@
+.outfits-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+}
+
+.page-header .ant-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.page-header .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.outfit-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 100%;
+}
+
+.outfit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.outfit-image-container {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background: #f5f5f5;
+  position: relative;
+}
+
+.outfit-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.outfit-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+}
+
+.placeholder-content {
+  text-align: center;
+  color: #bfbfbf;
+}
+
+.placeholder-content p {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.outfit-card .ant-card-meta-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.outfit-card .ant-card-meta-description {
+  color: #8c8c8c;
+  font-size: 13px;
+}
+
+.outfit-card .ant-card-actions {
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+}
+
+.outfit-card .ant-card-actions > li {
+  margin: 8px 0;
+}
+
+.outfit-card .ant-btn-text {
+  color: #595959;
+  transition: all 0.3s ease;
+}
+
+.outfit-card .ant-btn-text:hover {
+  color: #667eea;
+  transform: scale(1.1);
+}
+
+.outfit-card .ant-btn-text.favorite-active {
+  color: #ff4d4f;
+}
+
+.outfit-card .ant-btn-text.favorite-active:hover {
+  color: #ff7875;
+}
+
+.outfit-card .ant-btn-text.ant-btn-dangerous:hover {
+  color: #ff4d4f;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+  padding: 24px 0;
+}
+
+.pagination-container .ant-pagination-item-active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+}
+
+.pagination-container .ant-pagination-item-active a {
+  color: white;
+}
+
+.pagination-container .ant-pagination-item:hover {
+  border-color: #667eea;
+}
+
+.pagination-container .ant-pagination-item:hover a {
+  color: #667eea;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.outfit-image-container .ant-carousel .slick-dots {
+  bottom: 12px;
+}
+
+.outfit-image-container .ant-carousel .slick-dots li button {
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0.7;
+}
+
+.outfit-image-container .ant-carousel .slick-dots li.slick-active button {
+  background: white;
+  opacity: 1;
+}
+
+.outfits-page .ant-empty {
+  padding: 60px 20px;
+}
+
+.outfits-page .ant-empty-description {
+  color: #8c8c8c;
+  font-size: 16px;
+}
+
+.ant-modal-confirm-body .ant-modal-confirm-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.ant-modal-confirm-body .ant-modal-confirm-content {
+  margin-top: 12px;
+  color: #595959;
+}
+
+@media (max-width: 768px) {
+  .outfits-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .page-header .ant-btn {
+    width: 100%;
+  }
+
+  .outfit-image-container {
+    height: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .outfit-image-container {
+    height: 180px;
+  }
+
+  .outfit-card .ant-card-meta-title {
+    font-size: 14px;
+  }
+}

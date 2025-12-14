@@ -1,0 +1,178 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 520px;
+}
+
+.auth-card {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 24px;
+  background: #fff;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 48px;
+  color: #667eea;
+}
+
+.auth-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #8c8c8c;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.auth-tabs {
+  margin-bottom: 16px;
+}
+
+.auth-tabs .ant-tabs-tab {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 24px;
+}
+
+.auth-tabs .ant-tabs-tab-active {
+  font-weight: 600;
+}
+
+.auth-tabs .ant-tabs-ink-bar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-form {
+  margin-top: 24px;
+}
+
+.auth-form .ant-form-item-label > label {
+  font-weight: 500;
+  color: #262626;
+}
+
+.auth-button {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 8px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.auth-button:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.alternative-section {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.alternative-section p {
+  color: #595959;
+  margin: 0;
+}
+
+.alternative-link {
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.alternative-link:hover {
+  color: #5568d3;
+  text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+  .auth-page {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 20px 16px;
+  }
+
+  .auth-header h1 {
+    font-size: 24px;
+  }
+
+  .logo-icon {
+    font-size: 40px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .auth-tabs .ant-tabs-tab {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}
+
+/* Input focus effects */
+.auth-form .ant-input-affix-wrapper:focus,
+.auth-form .ant-input-affix-wrapper-focused {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.auth-form .ant-input:focus,
+.auth-form .ant-input-focused {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* Tabs styling */
+.auth-tabs .ant-tabs-tab:hover {
+  color: #667eea;
+}
+
+.auth-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #667eea;
+}
+
+/* Form item spacing */
+.auth-form .ant-form-item {
+  margin-bottom: 20px;
+}
+
+/* Divider styling */
+.auth-card .ant-divider-plain.ant-divider-with-text {
+  color: #8c8c8c;
+  font-size: 14px;
+}
