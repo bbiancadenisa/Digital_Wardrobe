@@ -1,0 +1,33 @@
+.edit-outfit-page {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.edit-outfit-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.outfit-form {
+  margin-top: 24px;
+}
+
+.form-actions {
+  margin-top: 32px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .edit-outfit-page {
+    padding: 16px;
+  }
+}
