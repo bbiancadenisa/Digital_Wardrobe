@@ -8,17 +8,20 @@ export const addFavorite = async (req, res) => {
   const outfitId = req.params.outfit_id;
 
   try {
-    const { rows } = await pool.query(
-      `INSERT INTO favorites (user_id, outfit_id)
-       VALUES ($1, $2)
-       ON CONFLICT (user_id, outfit_id) DO NOTHING
-       RETURNING *`,
+    // Check if already exists
+    const existing = await pool.query(
+      `SELECT id FROM favorites WHERE user_id = $1 AND outfit_id = $2`,
       [userId, outfitId]
     );
 
-    if (rows.length === 0) {
+    if (existing.rows.length > 0) {
       return res.status(200).json({ message: "Already in favorites" });
     }
+
+    await pool.query(
+      `INSERT INTO favorites (user_id, outfit_id) VALUES ($1, $2)`,
+      [userId, outfitId]
+    );
 
     res.status(201).json({ message: "Added to favorites" });
   } catch (err) {
@@ -31,71 +34,79 @@ export const addFavorite = async (req, res) => {
 // REMOVE FAVORITE
 // ======================================================
 export const removeFavorite = async (req, res) => {
-    const userId = req.user.id;
-    const outfitId = req.params.outfit_id;
-  
-    try {
-      const result = await pool.query(
-        "DELETE FROM favorites WHERE user_id = $1 AND outfit_id = $2",
-        [userId, outfitId]
-      );
-  
-      if (result.rowCount === 0) {
-        return res.status(404).json({ error: "Favorite not found" });
-      }
-  
-      res.status(204).send();
-    } catch (err) {
-      console.error("Error removing favorite:", err);
-      res.status(500).json({ error: "Failed to remove favorite" });
+  const userId = req.user.id;
+  const outfitId = req.params.outfit_id;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM favorites WHERE user_id = $1 AND outfit_id = $2",
+      [userId, outfitId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Favorite not found" });
     }
-  };
-  
-  // ======================================================
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Error removing favorite:", err);
+    res.status(500).json({ error: "Failed to remove favorite" });
+  }
+};
+
+// ======================================================
 // GET ALL FAVORITE OUTFITS
 // ======================================================
 export const getFavorites = async (req, res) => {
-    const userId = req.user.id;
-  
-    try {
-      // Get favorite outfit IDs
-      const favRes = await pool.query(
-        `SELECT o.id, o.name, o.created_at
+  const userId = req.user.id;
+
+  try {
+    // Get favorite outfits
+    const outfitFavRes = await pool.query(
+      `SELECT f.id as favorite_id, f.outfit_id, f.created_at as favorited_at
          FROM favorites f
-         JOIN outfits o ON o.id = f.outfit_id
-         WHERE f.user_id = $1
+         WHERE f.user_id = $1 AND f.outfit_id IS NOT NULL
          ORDER BY f.created_at DESC`,
-        [userId]
+      [userId]
+    );
+
+    const outfitFavorites = outfitFavRes.rows;
+    const results = [];
+
+    // Get outfit details for each favorite
+    for (const fav of outfitFavorites) {
+      const outfitRes = await pool.query(
+        `SELECT o.id, o.name, o.created_at
+           FROM outfits o
+           WHERE o.id = $1`,
+        [fav.outfit_id]
       );
-  
-      const outfits = favRes.rows;
-  
-      if (outfits.length === 0) {
-        return res.json([]);
+
+      if (outfitRes.rows.length > 0) {
+        const outfit = outfitRes.rows[0];
+
+        // Get garments for this outfit
+        const garmentRes = await pool.query(
+          `SELECT g.*
+             FROM outfit_items oi
+             JOIN garments g ON g.id = oi.garment_id
+             WHERE oi.outfit_id = $1`,
+          [outfit.id]
+        );
+
+        results.push({
+          outfit_id: fav.outfit_id,
+          outfit: {
+            ...outfit,
+            garments: garmentRes.rows,
+          },
+        });
       }
-  
-      const outfitIds = outfits.map(o => o.id);
-  
-      const garmentRes = await pool.query(
-        `SELECT oi.outfit_id, g.*
-         FROM outfit_items oi
-         JOIN garments g ON g.id = oi.garment_id
-         WHERE oi.outfit_id = ANY($1)`,
-        [outfitIds]
-      );
-  
-      const garmentRows = garmentRes.rows;
-  
-      const favoritesWithGarments = outfits.map(outfit => ({
-        ...outfit,
-        garments: garmentRows.filter(g => g.outfit_id === outfit.id)
-      }));
-  
-      res.json(favoritesWithGarments);
-  
-    } catch (err) {
-      console.error("Error fetching favorites:", err);
-      res.status(500).json({ error: "Failed to fetch favorites" });
     }
-  };
-  
+
+    res.json(results);
+  } catch (err) {
+    console.error("Error fetching favorites:", err);
+    res.status(500).json({ error: "Failed to fetch favorites" });
+  }
+};

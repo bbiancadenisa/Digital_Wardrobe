@@ -1,0 +1,123 @@
+.add-garment-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.add-garment-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.add-garment-card .ant-card-head {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  border-radius: 12px 12px 0 0;
+  border: none;
+}
+
+.add-garment-card .ant-card-head-title {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+.card-title span {
+  font-size: 20px;
+}
+
+.card-title .anticon {
+  font-size: 24px;
+}
+
+.garment-form {
+  padding: 8px 0;
+}
+
+.garment-form .ant-form-item-label > label {
+  font-weight: 500;
+  font-size: 15px;
+  color: #262626;
+}
+
+.garment-form .ant-input,
+.garment-form .ant-select-selector {
+  border-radius: 8px;
+}
+
+.garment-form .ant-input:focus,
+.garment-form .ant-input-focused,
+.garment-form .ant-select-focused .ant-select-selector {
+  border-color: #52c41a;
+  box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.1);
+}
+
+.form-actions {
+  margin-top: 32px;
+  margin-bottom: 0;
+}
+
+.form-actions button {
+  border-radius: 8px;
+  height: 44px;
+  font-weight: 500;
+}
+
+.form-actions .ant-btn-primary {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  border: none;
+}
+
+.form-actions .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #49aa19 0%, #2f7a0b 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+}
+
+/* Upload */
+.garment-form .ant-upload-picture-card-wrapper {
+  width: 100%;
+}
+
+.garment-form .ant-upload-list-picture-card-container {
+  width: 200px;
+  height: 200px;
+}
+
+.garment-form .ant-upload-select-picture-card {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  border: 2px dashed #d9d9d9;
+  transition: all 0.3s ease;
+}
+
+.garment-form .ant-upload-select-picture-card:hover {
+  border-color: #52c41a;
+}
+
+@media (max-width: 768px) {
+  .add-garment-page {
+    padding: 16px;
+  }
+
+  .card-title span {
+    font-size: 18px;
+  }
+
+  .form-actions button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .form-actions button:first-child {
+    margin-right: 0 !important;
+  }
+}

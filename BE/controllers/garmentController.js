@@ -3,20 +3,37 @@ import cloudinary from "../services/cloudinary.js";
 
 const uploadToCloudinary = (fileBuffer) =>
   new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream({ folder: "digital-wardrobe" },
-      (err, result) => (err ? reject(err) : resolve(result)));
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "digital-wardrobe" },
+      (err, result) => (err ? reject(err) : resolve(result))
+    );
     stream.end(fileBuffer);
   });
 
 export const listGarments = async (req, res) => {
   const { q, category_id, style_id, season_id, color } = req.query;
   const where = [];
-  const params = [];
-  if (q) { params.push(`%${q}%`); where.push(`g.name ILIKE $${params.length}`); }
-  if (category_id) { params.push(category_id); where.push(`g.category_id=$${params.length}`); }
-  if (style_id)    { params.push(style_id);    where.push(`g.style_id=$${params.length}`); }
-  if (season_id)   { params.push(season_id);   where.push(`g.season_id=$${params.length}`); }
-  if (color)       { params.push(color);       where.push(`g.color ILIKE $${params.length}`); }
+  const params = [req.user.id];
+  if (q) {
+    params.push(`%${q}%`);
+    where.push(`g.name ILIKE $${params.length}`);
+  }
+  if (category_id) {
+    params.push(category_id);
+    where.push(`g.category_id=$${params.length}`);
+  }
+  if (style_id) {
+    params.push(style_id);
+    where.push(`g.style_id=$${params.length}`);
+  }
+  if (season_id) {
+    params.push(season_id);
+    where.push(`g.season_id=$${params.length}`);
+  }
+  if (color) {
+    params.push(color);
+    where.push(`g.color ILIKE $${params.length}`);
+  }
 
   const sql = `
     SELECT g.*, c.name AS category_name, s.name AS style_name, se.name AS season_name
@@ -27,7 +44,7 @@ export const listGarments = async (req, res) => {
     WHERE g.user_id=$1 ${where.length ? " AND " + where.join(" AND ") : ""}
     ORDER BY g.created_at DESC
   `;
-  const { rows } = await pool.query(sql, [req.user.id, ...params]);
+  const { rows } = await pool.query(sql, params);
   res.json(rows);
 };
 
@@ -41,22 +58,52 @@ export const getGarment = async (req, res) => {
 };
 
 export const createGarment = async (req, res) => {
-  const { name, category_id, style_id, season_id, color, environment, material } = req.body;
+  try {
+    const {
+      name,
+      category_id,
+      style_id,
+      season_id,
+      color,
+      environment,
+      material,
+    } = req.body;
 
-  let image_url = null;
-  if (req.file) {
-    const result = await uploadToCloudinary(req.file.buffer);
-    image_url = result.secure_url;
+    let image_url = null;
+    if (req.file) {
+      try {
+        const result = await uploadToCloudinary(req.file.buffer);
+        image_url = result.secure_url;
+      } catch (uploadError) {
+        console.error("Cloudinary upload failed:", uploadError);
+        // Continue without image if Cloudinary fails
+      }
+    }
+
+    const { rows } = await pool.query(
+      `INSERT INTO garments
+       (user_id, category_id, style_id, season_id, name, image_url, color, environment, material)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+       RETURNING *`,
+      [
+        req.user.id,
+        category_id,
+        style_id,
+        season_id,
+        name,
+        image_url,
+        color,
+        environment,
+        material,
+      ]
+    );
+    res.status(201).json(rows[0]);
+  } catch (error) {
+    console.error("Error creating garment:", error);
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to create garment" });
   }
-
-  const { rows } = await pool.query(
-    `INSERT INTO garments
-     (user_id, category_id, style_id, season_id, name, image_url, color, environment, material)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-     RETURNING *`,
-    [req.user.id, category_id, style_id, season_id, name, image_url, color, environment, material]
-  );
-  res.status(201).json(rows[0]);
 };
 
 // Update garment details, including optional image upload
@@ -71,7 +118,7 @@ export const updateGarment = async (req, res) => {
     season_id,
     color,
     environment,
-    material
+    material,
   } = req.body;
 
   try {
@@ -116,7 +163,7 @@ export const updateGarment = async (req, res) => {
         material || existing.rows[0].material,
         image_url,
         garmentId,
-        userId
+        userId,
       ]
     );
 
@@ -135,22 +182,20 @@ export const deleteGarment = async (req, res) => {
   try {
     // Check if garment is used in any outfit
     const checkRes = await pool.query(
-      `SELECT 1 FROM outfit_items 
-       WHERE garment_id = $1 
-       LIMIT 1`,
+      `SELECT DISTINCT outfit_id FROM outfit_items WHERE garment_id = $1`,
       [garmentId]
     );
 
     if (checkRes.rows.length > 0) {
       return res.status(400).json({
-        error: "This garment cannot be deleted because it is used in one or more outfits."
+        error:
+           error: "This garment cannot be deleted because it is used in one or more outfits."
       });
     }
 
     // Delete garment only if user owns it
     const deleteRes = await pool.query(
-      `DELETE FROM garments 
-       WHERE id = $1 AND user_id = $2`,
+      `DELETE FROM garments WHERE id = $1 AND user_id = $2`,
       [garmentId, userId]
     );
 
@@ -165,27 +210,45 @@ export const deleteGarment = async (req, res) => {
   }
 };
 
-
 export const createMultipleGarments = async (req, res) => {
   const userId = req.user.id;
   const garments = req.body.garments;
 
   if (!Array.isArray(garments) || garments.length === 0) {
-    return res.status(400).json({ error: "Please provide an array of garments." });
+    return res
+      .status(400)
+      .json({ error: "Please provide an array of garments." });
   }
 
   try {
     const inserted = [];
 
     for (const g of garments) {
-      const { name, category_id, style_id, season_id, environment, color, image_url } = g;
+      const {
+        name,
+        category_id,
+        style_id,
+        season_id,
+        environment,
+        color,
+        image_url,
+      } = g;
 
       const result = await pool.query(
         `INSERT INTO garments
         (user_id, name, category_id, style_id, season_id, environment, color, image_url)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *`,
-        [userId, name, category_id, style_id, season_id, environment, color, image_url]
+        [
+          userId,
+          name,
+          category_id,
+          style_id,
+          season_id,
+          environment,
+          color,
+          image_url,
+        ]
       );
 
       inserted.push(result.rows[0]);
@@ -197,5 +260,3 @@ export const createMultipleGarments = async (req, res) => {
     res.status(500).json({ error: "Failed to insert garments." });
   }
 };
-
-

@@ -1,6 +1,12 @@
-const { Pool } = require("pg");
-const dotenv = require("dotenv");
-const path = require("path"); 
+import pkg from "pg";
+const { Pool } = pkg;
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 dotenv.config({ path: path.join(__dirname, "../.env") }); // load BE/.env
 
 // Connection pool setup (recommended instead of Client)
@@ -14,7 +20,10 @@ const pool = new Pool({
 
 // Surface pooled client errors (idle clients etc.)
 pool.on("error", (err) => {
-  console.error("Unexpected PostgreSQL pool error:", err && (err.stack || err.message) || err);
+  console.error(
+    "Unexpected PostgreSQL pool error:",
+    (err && (err.stack || err.message)) || err
+  );
 });
 
 // Test connection once at startup
@@ -24,6 +33,11 @@ pool
     console.log("PostgreSQL connected successfully");
     client.release();
   })
-  .catch((err) => console.error("PostgreSQL connection error:", err && (err.stack || err.message) || err));
+  .catch((err) =>
+    console.error(
+      "PostgreSQL connection error:",
+      (err && (err.stack || err.message)) || err
+    )
+  );
 
-module.exports = pool;
+export default pool;
